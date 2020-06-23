@@ -1,8 +1,16 @@
 pragma solidity >=0.4.22 <0.7.0;
 
 contract Escrow {
+    
+    // Escrow agent
     address agent;
+    
+    // List of recipients
+    address payable[] public recipients;
+    
+    // Store money in escrow for each recipient
     mapping(address => uint256) public deposits;
+    
     
     modifier onlyAgent() {
         require(msg.sender == agent);
@@ -14,15 +22,23 @@ contract Escrow {
     }
     
     // Deposit ether into escrow
-    function deposit(address recipient) public onlyAgent payable {
+    function deposit() public onlyAgent payable {
         uint256 amount = msg.value;
-        deposits[recipient] = deposits[recipient] + amount;
+        for (uint256 i = 0; i < recipients.length; i++) {
+            deposits[recipients[i]] += amount;
+        }
     }
     
-    // Withdraw ether from escrow and send to recipient
-    function withdraw(address payable recipient) public onlyAgent {
-        uint256 payment = deposits[recipient];
-        deposits[recipient] = 0;
-        recipient.transfer(payment);
+    // Transfer ether from escrow to recipient
+    function withdraw() public onlyAgent {
+        for (uint256 i = 0; i < recipients.length; i++) {
+            uint256 payment = deposits[recipients[i]];
+            deposits[recipients[i]] = 0;
+            recipients[i].transfer(payment);
+        }
+    }
+    
+    function addRecipient(address payable recipient) public {
+        recipients.push(recipient);
     }
 }
