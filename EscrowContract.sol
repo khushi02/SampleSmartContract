@@ -30,7 +30,7 @@ contract Escrow {
     }
     
     // Transfer ether from escrow to recipient
-    function withdraw() public onlyAgent {
+    function send() public onlyAgent {
         for (uint256 i = 0; i < recipients.length; i++) {
             uint256 payment = deposits[recipients[i]];
             deposits[recipients[i]] = 0;
