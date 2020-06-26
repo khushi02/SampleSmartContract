@@ -1,4 +1,4 @@
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity ^0.5.0;
 
 contract Escrow {
     
@@ -30,7 +30,7 @@ contract Escrow {
     }
     
     // Transfer ether from escrow to recipient
-    function send() public onlyAgent {
+    function send() public onlyAgent payable {
         for (uint256 i = 0; i < recipients.length; i++) {
             uint256 payment = deposits[recipients[i]];
             deposits[recipients[i]] = 0;
@@ -38,6 +38,7 @@ contract Escrow {
         }
     }
     
+    // Add new wallet address to recipients array
     function addRecipient(address payable recipient) public {
         recipients.push(recipient);
     }
