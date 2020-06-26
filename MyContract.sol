@@ -1,13 +1,17 @@
-pragma solidity >=0.4.22 <0.7.0;
+pragma solidity 0.5.1;
+
+contract ERC20Token {
+    string public name;
+    mapping(address => uint256) public balances;
+    
+    function mint() public {
+        balances[tx.origin]++;
+    }
+}
 
 contract MyContract {
-    mapping(address => uint256) public balances;
     address payable wallet;
-    
-    event Purchase(
-        address indexed _buyer, 
-        uint256 _amount
-    );
+    address public token;
     
     constructor(address payable _wallet) public {
         wallet = _wallet;
@@ -19,8 +23,7 @@ contract MyContract {
     
     // Buy token and send ether to wallet
     function buyToken() public payable {
-        balances[msg.sender] += 1;
+        ERC20Token(address(token)).mint();
         wallet.transfer(msg.value);
-        emit Purchase(msg.sender, 1);
     }
 }
