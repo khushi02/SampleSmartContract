@@ -23,7 +23,7 @@ contract Escrow {
     
     // Deposit ether into escrow
     function deposit() public onlyAgent payable {
-        uint256 amount = msg.value;
+        uint256 amount = msg.value/recipients.length;
         for (uint256 i = 0; i < recipients.length; i++) {
             deposits[recipients[i]] += amount;
         }
