@@ -1,3 +1,3 @@
 # Smart Contracts
 
-This repository is where I practice with Solidity and store the final drafts of my sample smart contracts.
+This repository is where I practice with Solidity and save my sample smart contracts.
