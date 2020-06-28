@@ -3,7 +3,10 @@ pragma solidity ^0.5.0;
 contract Escrow {
     
     // Escrow agent
-    address agent;
+    address owner;
+    
+    // Pause status
+    bool public isPaused = false;
     
     // List of recipients
     address payable[] public recipients;
@@ -12,17 +15,22 @@ contract Escrow {
     mapping(address => uint256) public deposits;
     
     
-    modifier onlyAgent() {
-        require(msg.sender == agent);
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+    
+    modifier isRunning {
+        require(!isPaused);
         _;
     }
     
     constructor() public {
-        agent = msg.sender;
+        owner = msg.sender;
     }
     
     // Deposit ether into escrow
-    function deposit() public onlyAgent payable {
+    function deposit() public onlyOwner isRunning payable {
         uint256 amount = msg.value/recipients.length;
         for (uint256 i = 0; i < recipients.length; i++) {
             deposits[recipients[i]] += amount;
@@ -30,7 +38,7 @@ contract Escrow {
     }
     
     // Transfer ether from escrow to recipient
-    function send() public onlyAgent payable {
+    function send() public onlyOwner isRunning payable {
         for (uint256 i = 0; i < recipients.length; i++) {
             uint256 payment = deposits[recipients[i]];
             deposits[recipients[i]] = 0;
@@ -39,7 +47,17 @@ contract Escrow {
     }
     
     // Add new wallet address to recipients array
-    function addRecipient(address payable recipient) public {
+    function addRecipient(address payable recipient) public onlyOwner {
         recipients.push(recipient);
+    }
+    
+    // Pause contract
+    function pauseContract() public onlyOwner {
+        isPaused = true;
+    }
+    
+    // Play contract
+    function playContract() public onlyOwner {
+        isPaused = false;
     }
 }
