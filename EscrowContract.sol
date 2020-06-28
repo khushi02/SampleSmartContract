@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 contract Escrow {
     
     // Escrow agent
-    address owner;
+    address payable owner;
     
     // Pause status
     bool public isPaused = false;
@@ -59,5 +59,10 @@ contract Escrow {
     // Play contract
     function playContract() public onlyOwner {
         isPaused = false;
+    }
+    
+    // Send stored ether to owner and remove code from blockchain
+    function kill() public onlyOwner {
+        selfdestruct(owner);
     }
 }
